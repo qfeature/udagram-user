@@ -13,6 +13,8 @@ router.get('/:id', async (req: Request, res: Response) => {
   const {id} = req.params;
   const item = await User.findByPk(id);
   res.send(item);
+
+  console.log(new Date().toLocaleString() + `: UDAGRAM-USER: Getting information for user ${id}` ); //Logging
 });
 
 export const UserRouter: Router = router;

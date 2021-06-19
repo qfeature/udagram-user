@@ -57,26 +57,32 @@ router.post('/login', async (req: Request, res: Response) => {
   const password = req.body.password;
 
   if (!email || !EmailValidator.validate(email)) {
+    console.log(new Date().toLocaleString() + `: UDAGRAM-USER: Email is required or malformed.` ); //Logging
     return res.status(400).send({auth: false, message: 'Email is required or malformed.'});
   }
 
   if (!password) {
+    console.log(new Date().toLocaleString() + `: UDAGRAM-USER: Password is required.` ); //Logging
     return res.status(400).send({auth: false, message: 'Password is required.'});
   }
 
   const user = await User.findByPk(email);
   if (!user) {
+    console.log(new Date().toLocaleString() + `: UDAGRAM-USER: User was not found.` ); //Logging
     return res.status(401).send({auth: false, message: 'User was not found..'});
   }
 
   const authValid = await comparePasswords(password, user.passwordHash);
 
   if (!authValid) {
+    console.log(new Date().toLocaleString() + `: UDAGRAM-USER: Password was invalid.` ); //Logging
     return res.status(401).send({auth: false, message: 'Password was invalid.'});
   }
 
   const jwt = generateJWT(user);
   res.status(200).send({auth: true, token: jwt, user: user.short()});
+
+  console.log(new Date().toLocaleString() + `: UDAGRAM-USER: User ${email} logged in.` ); //Logging
 });
 
 
@@ -85,15 +91,18 @@ router.post('/', async (req: Request, res: Response) => {
   const plainTextPassword = req.body.password;
 
   if (!email || !EmailValidator.validate(email)) {
+    console.log(new Date().toLocaleString() + `: UDAGRAM-USER: Email is missing or malformed.` ); //Logging
     return res.status(400).send({auth: false, message: 'Email is missing or malformed.'});
   }
 
   if (!plainTextPassword) {
+    console.log(new Date().toLocaleString() + `: UDAGRAM-USER: Password is required.` ); //Logging
     return res.status(400).send({auth: false, message: 'Password is required.'});
   }
 
   const user = await User.findByPk(email);
   if (user) {
+    console.log(new Date().toLocaleString() + `: UDAGRAM-USER: User already exists.` ); //Logging
     return res.status(422).send({auth: false, message: 'User already exists.'});
   }
 
@@ -109,6 +118,8 @@ router.post('/', async (req: Request, res: Response) => {
 
   const jwt = generateJWT(savedUser);
   res.status(201).send({token: jwt, user: savedUser.short()});
+
+  console.log(new Date().toLocaleString() + `: UDAGRAM-USER: New user ${email} registered.` ); //Logging
 });
 
 router.get('/', async (req: Request, res: Response) => {
